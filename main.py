@@ -21,12 +21,17 @@ from sklearn.exceptions import DataConversionWarning, ConvergenceWarning
 warnings.filterwarnings(action='ignore', category=DataConversionWarning)
 warnings.filterwarnings(action='ignore', category=ConvergenceWarning)
 
+# No. of cores to use for each framework
 n_jobs = 8
-timeout=int(sys.argv[1])
-scorefile=sys.argv[2]
 
+# Timeout in minutes for each framework
+timeout=int(sys.argv[1])
+
+# Output file to write scores
+scorefile=sys.argv[2]
 outfile = open(scorefile,"a")
 
+# OpenML dataset id for classification
 ids = [sys.argv[3]]
 for id in ids:
     print("running for id = ", id)
@@ -66,6 +71,7 @@ for id in ids:
                 print(sys.exc_info()[0])
                 continue
 
+    # Generate train-test splits for evaluation purposes
     X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y, random_state=1)
 
     timeout_in_sec = timeout*60
@@ -92,6 +98,10 @@ for id in ids:
 
     # Run Lite-AutoML framework on the dataset
     (best, atts, cl) = liteautoml.compute_score(X_train, y_train, X_test, y_test, cat_indicator, n_jobs, timeout_in_sec)
+    
+    # Run hyperopt-sklearn on the dataset 
     hp_best = evaluate_hyperopt.compute_score(X_train, y_train, X_test, y_test, cat_indicator, n_jobs, timeout_in_sec)
+    
+    # Write results and dataset details to file
     outfile.write(dataset.name + "," + str(dummy) + "," + cl + "," + str(id) + "," + str(rows) + "," + str(classes) + "," + str(auto_score) + "," + str(tpot_score) + "," + str(hp_best) + "," + str(best) +  "," + str(len(X.columns)) + "," + str(atts) +'\n')
 outfile.close()
