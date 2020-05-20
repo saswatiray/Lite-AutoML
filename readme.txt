@@ -1,6 +1,6 @@
 
 Lite-AutoML:
-
+Quick and simple AutoML framework to run on dataset for ML classification task. Evaluates Lite-AutoML in comparison to auto-sklearn, TPOT and hyperopt-sklearn.
 
 In a conda virtual environment, install the following-
 sklearn
